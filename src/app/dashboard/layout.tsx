@@ -18,9 +18,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main: sidebar + content */}
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className="flex flex-col flex-1 bg-gray-50">
+      <div className="flex flex-col flex-1 bg-gray-50 w-screen">
         <Header onHamburgerClick={toggleSidebar} />
-        <main className="flex-1 p-6 overflow-auto">{children}</main>
+        <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
   );
