@@ -1,13 +1,7 @@
 // src/components/LogsTable.tsx
 "use client";
 
-export interface Log {
-  id: number;
-  timestamp: string;
-  user: string;
-  action: string;
-  details: string;
-}
+import { Log } from "@/lib/api/logs";
 
 interface LogsTableProps {
   logs: Log[];
@@ -35,9 +29,9 @@ export function LogsTable({ logs }: LogsTableProps) {
         </thead>
         <tbody className="divide-y divide-gray-100">
           {logs.map((log) => (
-            <tr key={log.id} className="hover:bg-gray-50">
+            <tr key={log._id} className="hover:bg-gray-50">
               <td className="px-6 py-4 text-gray-800">{log.timestamp}</td>
-              <td className="px-6 py-4 text-gray-800">{log.user}</td>
+              <td className="px-6 py-4 text-gray-800">{log.user.name}</td>
               <td className="px-6 py-4 text-gray-800">{log.action}</td>
               <td className="px-6 py-4 text-gray-700">{log.details}</td>
             </tr>

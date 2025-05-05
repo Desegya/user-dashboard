@@ -1,60 +1,48 @@
 // src/app/dashboard/logs/page.tsx
 "use client";
 
-import { useState, useMemo } from "react";
-import { DocumentIcon } from "@heroicons/react/24/outline";
-import { LogsTable, Log } from "@/components/tables/LogsTable";
-
-const mockLogs: Log[] = [
-  {
-    id: 1,
-    timestamp: "2025-05-02 14:23",
-    user: "Sarah Daniels",
-    action: "Created User",
-    details: "Created user “James Carter”",
-  },
-  {
-    id: 2,
-    timestamp: "2025-05-02 13:10",
-    user: "James Carter",
-    action: "Updated Role",
-    details: "Changed Linda’s role to “Manager”",
-  },
-  {
-    id: 3,
-    timestamp: "2025-05-01 18:45",
-    user: "Admin",
-    action: "Deleted User",
-    details: "Deleted user “Mark Lee”",
-  },
-  {
-    id: 4,
-    timestamp: "2025-05-01 09:12",
-    user: "Linda Maxwell",
-    action: "Logged In",
-    details: "Successful login from IP 192.168.1.5",
-  },
-  {
-    id: 5,
-    timestamp: "2025-04-30 22:30",
-    user: "Sarah Daniels",
-    action: "Reset Password",
-    details: "Password reset for user “Admin”",
-  },
-];
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { LogsTable } from "@/components/tables/LogsTable";
+import { getLogs, Log } from "@/lib/api/logs";
 
 export default function LogsPage() {
   const [search, setSearch] = useState("");
+  const [logs, setLogs] = useState<Log[]>([]);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [total, setTotal] = useState(0);
+
+  const [error, setError] = useState<string | null>(null);
+
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const loadLogs = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { logs, meta } = await getLogs(page, limit);
+      setLogs(logs);
+      setTotal(meta.total);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load roles");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadLogs();
+  }, [loadLogs]);
 
   // filter logs by search term (case-insensitive, checks all text fields)
   const filteredLogs = useMemo(() => {
     const term = search.trim().toLowerCase();
-    if (!term) return mockLogs;
+    if (!term) return logs;
 
-    return mockLogs.filter(
+    return logs.filter(
       ({ timestamp, user, action, details }) =>
         timestamp.toLowerCase().includes(term) ||
-        user.toLowerCase().includes(term) ||
+        user.name.toLowerCase().includes(term) ||
         action.toLowerCase().includes(term)
     );
   }, [search]);

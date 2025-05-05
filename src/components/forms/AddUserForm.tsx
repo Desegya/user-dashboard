@@ -1,14 +1,9 @@
+// src/components/forms/AddUserForm.tsx
 "use client";
 
 import { FC, useState } from "react";
-import { UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
-export interface NewUser {
-  name: string;
-  email: string;
-  role: string;
-  status: "Active" | "Inactive";
-}
+import { UserIcon } from "@heroicons/react/24/outline";
+import { NewUser } from "@/lib/api/users";
 
 interface AddUserFormProps {
   onSave: (user: NewUser) => void;
@@ -16,10 +11,21 @@ interface AddUserFormProps {
 }
 
 export const AddUserForm: FC<AddUserFormProps> = ({ onSave, onCancel }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("User");
-  const [status, setStatus] = useState<NewUser["status"]>("Active");
+  const [form, setForm] = useState<NewUser>({
+    name: "",
+    email: "",
+    password: "",
+    role: "viewer",
+    status: "Active",
+    // photo: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+  };
 
   return (
     <div>
@@ -27,60 +33,98 @@ export const AddUserForm: FC<AddUserFormProps> = ({ onSave, onCancel }) => {
         <UserIcon className="h-6 w-6 text-green-600" />
         <h2 className="ml-2 text-xl font-semibold">Add New User</h2>
       </div>
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          onSave({ name, email, role, status });
+          onSave(form);
         }}
         className="space-y-4"
       >
+        {/* Name */}
         <div>
           <label className="block text-sm font-medium mb-1">Name</label>
           <input
+            name="name"
             type="text"
-            className="w-full border border-gray-300 rounded-lg p-2"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            className="w-full border rounded-lg p-2"
+            value={form.name}
+            onChange={handleChange}
             required
           />
         </div>
 
+        {/* Email */}
         <div>
           <label className="block text-sm font-medium mb-1">Email</label>
           <input
+            name="email"
             type="email"
-            className="w-full border border-gray-300 rounded-lg p-2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border rounded-lg p-2"
+            value={form.email}
+            onChange={handleChange}
             required
           />
         </div>
 
+        {/* Password */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Password</label>
+          <input
+            name="password"
+            type="password"
+            className="w-full border rounded-lg p-2"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        {/* Role */}
         <div>
           <label className="block text-sm font-medium mb-1">Role</label>
           <select
-            className="w-full border border-gray-300 rounded-lg p-2"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
+            name="role"
+            className="w-full border rounded-lg p-2"
+            value={form.role}
+            onChange={handleChange}
+            required
           >
-            <option>User</option>
-            <option>Moderator</option>
-            <option>Admin</option>
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+            <option value="viewer">Viewer</option>
           </select>
         </div>
 
+        {/* Status */}
         <div>
           <label className="block text-sm font-medium mb-1">Status</label>
           <select
-            className="w-full border border-gray-300 rounded-lg p-2"
-            value={status}
-            onChange={(e) => setStatus(e.target.value as NewUser["status"])}
+            name="status"
+            className="w-full border rounded-lg p-2"
+            value={form.status}
+            onChange={handleChange}
+            required
           >
             <option>Active</option>
             <option>Inactive</option>
           </select>
         </div>
 
+        {/* Photo URL (optional) */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Photo URL</label>
+          <input
+            name="photo"
+            type="url"
+            className="w-full border rounded-lg p-2"
+            value={form.photo}
+            onChange={handleChange}
+            placeholder="https://..."
+          />
+        </div>
+
+        {/* Actions */}
         <div className="flex justify-end space-x-2">
           <button
             type="button"

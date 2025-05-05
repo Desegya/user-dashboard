@@ -1,12 +1,13 @@
 "use client";
 
 import { FC, useState } from "react";
-import { Role } from "../tables/RolesTable";
-import { allPermissions } from "./AddRoleForm";
+// import { Role } from "../tables/RolesTable";
+import { Permission, ALL_PERMISSIONS } from "@/utils/permissions";
+import { Role, RolePayload } from "@/lib/api/roles";
 
 interface EditRoleFormProps {
-  role: Role & { permissions?: string[] };
-  onSave: (updated: Role & { permissions?: string[] }) => void;
+  role: Role & { permissions: Record<Permission, boolean> };
+  onSave: (updated: Role) => void;
   onCancel: () => void;
 }
 
@@ -16,15 +17,11 @@ export const EditRoleForm: FC<EditRoleFormProps> = ({
   onCancel,
 }) => {
   const [name, setName] = useState(role.name);
-  const [description, setDescription] = useState(role.description);
-  const [permissions, setPermissions] = useState<string[]>(
-    role.permissions || []
-  );
+  const [description, setDescription] = useState(role.description || "");
+  const [permissions, setPermissions] = useState(role.permissions);
 
-  const togglePerm = (key: string) => {
-    setPermissions((prev) =>
-      prev.includes(key) ? prev.filter((p) => p !== key) : [...prev, key]
-    );
+  const toggle = (perm: Permission) => {
+    setPermissions((prev) => ({ ...prev, [perm]: !prev[perm] }));
   };
 
   return (
@@ -33,7 +30,7 @@ export const EditRoleForm: FC<EditRoleFormProps> = ({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          onSave({ ...role, name, description, permissions });
+          onSave({ ...role, _id: role._id, name, description, permissions });
         }}
         className="space-y-4"
       >
@@ -63,15 +60,14 @@ export const EditRoleForm: FC<EditRoleFormProps> = ({
         <div>
           <p className="block text-sm font-medium mb-2">Permissions</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {allPermissions.map(({ key, label }) => (
-              <label key={key} className="inline-flex items-center space-x-2">
+            {ALL_PERMISSIONS.map((perm) => (
+              <label key={perm} className="inline-flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                  checked={permissions.includes(key)}
-                  onChange={() => togglePerm(key)}
+                  checked={permissions[perm]}
+                  onChange={() => toggle(perm)}
                 />
-                <span className="text-sm">{label}</span>
+                <span className="text-sm">{perm}</span>
               </label>
             ))}
           </div>

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { FC, useState } from 'react';
+import { FC, useState } from "react";
 
 export interface InviteData {
   email: string;
@@ -12,9 +12,12 @@ interface InviteUserFormProps {
   onCancel: () => void;
 }
 
-export const InviteUserForm: FC<InviteUserFormProps> = ({ onInvite, onCancel }) => {
-  const [email, setEmail] = useState('');
-  const [role, setRole]   = useState('User');
+export const InviteUserForm: FC<InviteUserFormProps> = ({
+  onInvite,
+  onCancel,
+}) => {
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("User");
 
   return (
     <div>
@@ -27,7 +30,9 @@ export const InviteUserForm: FC<InviteUserFormProps> = ({ onInvite, onCancel }) 
         className="space-y-4"
       >
         <div>
-          <label className="block text-sm font-medium mb-1">Email Address</label>
+          <label className="block text-sm font-medium mb-1">
+            Email Address
+          </label>
           <input
             type="email"
             required

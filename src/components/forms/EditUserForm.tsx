@@ -1,7 +1,7 @@
 "use client";
 
+import { User } from "@/lib/api/users";
 import { FC, useState } from "react";
-import { User } from "./UserTable"; // ensure User interface is exported
 
 interface EditUserFormProps {
   user: User;

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { FC } from 'react';
+import { FC } from "react";
 
 interface StatCardProps {
   label: string;

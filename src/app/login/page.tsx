@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiFetch } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,13 +12,15 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // 👇 Mock login logic
-    if (email === "admin@example.com" && password === "password123") {
-      localStorage.setItem("token", "fake-jwt-token");
+    try {
+      const { token } = await apiFetch<{ token: string }>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+      localStorage.setItem("token", token);
       router.push("/dashboard");
-    } else {
-      setError("Invalid credentials");
+    } catch (err: any) {
+      setError(err.message || "Login failed");
     }
   };
 
@@ -33,9 +36,14 @@ export default function LoginPage() {
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <form onSubmit={handleLogin} className="space-y-4 mt-10">
           <div>
-            <label htmlFor="email" className="block text-[18px] font-medium mb-1">Email</label>
+            <label
+              htmlFor="email"
+              className="block text-[18px] font-medium mb-1"
+            >
+              Email
+            </label>
             <input
-            id="email"
+              id="email"
               type="email"
               className="w-full border border-[#EEEEEE] rounded-lg p-3"
               placeholder="Enter your email address"
@@ -45,11 +53,14 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-[18px] font-medium mb-1">
+            <label
+              htmlFor="password"
+              className="block text-[18px] font-medium mb-1"
+            >
               Password
             </label>
             <input
-            id="password"
+              id="password"
               type="password"
               className="w-full border border-[#EEEEEE] rounded-lg p-3"
               placeholder="Enter your password"

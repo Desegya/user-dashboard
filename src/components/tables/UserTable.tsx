@@ -6,36 +6,25 @@ import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { EditUserForm } from "../forms/EditUserForm";
 import { DeleteConfirm } from "../DeleteConfirm";
 import { Modal } from "../Modal";
+import { User } from "@/lib/api/users";
 
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: "Active" | "Inactive";
-  avatar: string;
+// export interface User {
+//   id: string;
+//   name: string;
+//   email: string;
+//   role: string;
+//   status: "Active" | "Inactive";
+//   photo?: string;
+// }
+
+interface UsersTableProps {
+  users: User[];
 }
 
-// mock a larger list for pagination demo
-const allUsers: User[] = Array.from({ length: 20 }).map((_, i) => ({
-  id: i + 1,
-  name: `User ${i + 1}`,
-  email: `user${i + 1}@example.com`,
-  role: i % 3 === 0 ? "Admin" : i % 3 === 1 ? "Moderator" : "User",
-  status: i % 4 === 0 ? "Inactive" : "Active",
-  avatar: `https://i.pravatar.cc/150?img=${(i % 70) + 1}`,
-}));
-
-const PAGE_SIZE = 5;
-
-export function UsersTable() {
+export function UsersTable({ users }: UsersTableProps) {
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<User | null>(null);
   const [deleting, setDeleting] = useState<User | null>(null);
-
-  const totalPages = Math.ceil(allUsers.length / PAGE_SIZE);
-  const start = (page - 1) * PAGE_SIZE;
-  const users = allUsers.slice(start, start + PAGE_SIZE);
 
   const handleSave = (updated: User) => {
     console.log("Saving user", updated);
@@ -76,11 +65,6 @@ export function UsersTable() {
             {users.map((user) => (
               <tr key={user.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 flex items-center space-x-3">
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
                   <span className="font-medium">{user.name}</span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700">
@@ -127,7 +111,7 @@ export function UsersTable() {
         >
           Prev
         </button>
-        <div className="space-x-1">
+        {/* <div className="space-x-1">
           {Array.from({ length: totalPages }).map((_, idx) => {
             const p = idx + 1;
             return (
@@ -149,7 +133,7 @@ export function UsersTable() {
           className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
         >
           Next
-        </button>
+        </button> */}
       </div>
 
       {/* Edit Modal */}
